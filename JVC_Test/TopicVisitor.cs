@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace JVC_Test
@@ -19,12 +22,21 @@ namespace JVC_Test
             {
                 int count = (1 + i * 25);
                 topicStats.AddRange(HTMLVisitor.GetTopics(HTMLVisitor.GetHtml(TOPIC_URL.Replace("{1}", count.ToString()))));
-                onProgress?.Invoke((float)i / pages);
+                onProgress?.Invoke((float)(i + 1) / pages);
             }
         }
         public string GetTopicsInfos()
         {
             return string.Join("\n\n", topicStats.Select(topic => $"{topic.TopicAuthor} : {topic.TopicDate}\n{topic.TopicName}"));
+        }
+
+        public void ToJson(string path = "")
+        {
+            string json = JsonConvert.SerializeObject(topicStats, Formatting.Indented);
+            if (!string.IsNullOrEmpty(path))
+            {
+                File.WriteAllText(path, json);
+            }
         }
     }
 }
