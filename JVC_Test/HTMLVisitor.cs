@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +13,26 @@ namespace JVC_Test
 {
     internal class HTMLVisitor
     {
+        private const string FILTER_PATH = "Resources/http_proxies.txt";
+
+        private static WebProxy GetProxy()
+        {
+            var lst = File.ReadAllLines(FILTER_PATH).ToList();
+
+            var ip = lst[new Random().Next(0, lst.Count)];
+            WebProxy proxy = new WebProxy();
+            proxy.Address = new Uri("http://" + ip);
+
+            return proxy;
+        }
+
         public static string GetHtml(string url)
         {
+            var httpClientHandler = new HttpClientHandler
+            {
+                Proxy = GetProxy(),
+            };
+
             var client = new HttpClient();
             var content = client.GetStringAsync(url).Result;
             return content;

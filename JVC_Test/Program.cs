@@ -11,12 +11,17 @@ namespace JVC_Test
         public static async void Start()
         {
             var topicVisitor = new TopicVisitor();
-            var task = topicVisitor.ParseTopics(10, OnProgress);
+            var task = topicVisitor.ParseTopics(100, OnProgress);
             while (!task.IsCompleted)
             {
                 await Task.Delay(1);
             }
-            topicVisitor.ToJson("file.json");
+            Console.WriteLine();
+
+
+            Console.WriteLine(topicVisitor.GetTopWordFilter());
+            
+            //topicVisitor.ToJson("file.json");
         }
         private static void OnProgress(float value)
         {
